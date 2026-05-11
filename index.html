@@ -1,0 +1,1677 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>WebBoost — Soluciones Digitales que Impulsan Negocios</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+/* ═══════════════════════════════════════════════════════════════
+   DESIGN TOKENS
+═══════════════════════════════════════════════════════════════ */
+:root{
+  --ink:       #050810;
+  --ink-2:     #0b0f1a;
+  --ink-3:     #111827;
+  --surface:   #161d2e;
+  --surface-2: #1e2740;
+  --border:    rgba(255,255,255,.07);
+  --border-2:  rgba(255,255,255,.12);
+  --blue:      #2b6fff;
+  --blue-2:    #4d8eff;
+  --blue-glow: rgba(43,111,255,.25);
+  --cyan:      #00c6ff;
+  --white:     #ffffff;
+  --white-70:  rgba(255,255,255,.7);
+  --white-40:  rgba(255,255,255,.4);
+  --white-15:  rgba(255,255,255,.08);
+  --text:      #e4e9f4;
+  --text-muted:#7b8db5;
+  --radius-sm: 10px;
+  --radius:    16px;
+  --radius-lg: 24px;
+  --radius-xl: 32px;
+  --ease:      cubic-bezier(.4,0,.2,1);
+  --ease-out:  cubic-bezier(0,0,.2,1);
+  --spring:    cubic-bezier(.34,1.56,.64,1);
+  --f-display:'Outfit',sans-serif;
+  --f-mono:   'JetBrains Mono',monospace;
+  --shadow:   0 4px 24px rgba(0,0,0,.4);
+  --shadow-lg:0 20px 60px rgba(0,0,0,.6);
+  --shadow-blue:0 8px 32px rgba(43,111,255,.35);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;font-size:16px}
+body{
+  font-family:var(--f-display);
+  background:var(--ink);
+  color:var(--text);
+  overflow-x:hidden;
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+img{display:block;max-width:100%}
+a{text-decoration:none;color:inherit}
+ul{list-style:none}
+
+/* ═══════════════════════════════════════════════════════════════
+   NOISE TEXTURE OVERLAY
+═══════════════════════════════════════════════════════════════ */
+body::before{
+  content:'';
+  position:fixed;
+  inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events:none;
+  z-index:9999;
+  opacity:.4;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   CUSTOM CURSOR
+═══════════════════════════════════════════════════════════════ */
+.cursor{
+  position:fixed;
+  width:10px;height:10px;
+  background:var(--blue);
+  border-radius:50%;
+  pointer-events:none;
+  z-index:10000;
+  transform:translate(-50%,-50%);
+  transition:width .2s,height .2s,opacity .2s;
+  mix-blend-mode:screen;
+}
+.cursor-ring{
+  position:fixed;
+  width:36px;height:36px;
+  border:1.5px solid rgba(43,111,255,.5);
+  border-radius:50%;
+  pointer-events:none;
+  z-index:10000;
+  transform:translate(-50%,-50%);
+  transition:transform .1s var(--ease-out),width .3s,height .3s,border-color .3s;
+}
+@media(hover:none){.cursor,.cursor-ring{display:none}}
+
+/* ═══════════════════════════════════════════════════════════════
+   UTILITIES
+═══════════════════════════════════════════════════════════════ */
+.wrap{width:min(90%,1160px);margin-inline:auto}
+.chip{
+  display:inline-flex;align-items:center;gap:.45rem;
+  font-size:.72rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--blue-2);
+  background:rgba(43,111,255,.12);
+  border:1px solid rgba(43,111,255,.25);
+  padding:.35rem 1rem;border-radius:100px;
+  margin-bottom:1.25rem;
+}
+.chip::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--blue-2);animation:blink 1.4s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+.section-eyebrow{font-size:.7rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--blue-2);margin-bottom:.75rem}
+.h1{font-size:clamp(2.6rem,6vw,5rem);font-weight:900;line-height:1.04;letter-spacing:-.03em;color:var(--white)}
+.h2{font-size:clamp(2rem,4vw,3.2rem);font-weight:800;line-height:1.1;letter-spacing:-.025em;color:var(--white)}
+.h3{font-size:1.35rem;font-weight:700;color:var(--white)}
+.lead{font-size:1.1rem;color:var(--text-muted);line-height:1.75;max-width:560px}
+.gradient-text{
+  background:linear-gradient(135deg,var(--blue-2) 0%,var(--cyan) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   BUTTONS
+═══════════════════════════════════════════════════════════════ */
+.btn{
+  display:inline-flex;align-items:center;gap:.55rem;
+  font-family:var(--f-display);font-weight:700;font-size:.9rem;
+  padding:.85rem 1.8rem;border-radius:100px;border:none;cursor:pointer;
+  transition:transform .25s var(--spring),box-shadow .25s var(--ease),background .2s;
+  white-space:nowrap;position:relative;overflow:hidden;
+}
+.btn::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(rgba(255,255,255,.12),transparent);
+  opacity:0;transition:opacity .2s;
+}
+.btn:hover::after{opacity:1}
+.btn:hover{transform:translateY(-3px)}
+.btn:active{transform:translateY(0)}
+.btn-primary{background:var(--blue);color:var(--white);box-shadow:0 0 0 0 var(--blue-glow)}
+.btn-primary:hover{box-shadow:var(--shadow-blue),0 0 40px rgba(43,111,255,.2)}
+.btn-ghost{background:var(--white-15);color:var(--white);border:1px solid var(--border-2);backdrop-filter:blur(8px)}
+.btn-ghost:hover{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.22)}
+.btn-lg{padding:1rem 2.2rem;font-size:1rem}
+.btn-icon{width:1.1rem;height:1.1rem;transition:transform .2s var(--spring)}
+.btn:hover .btn-icon{transform:translateX(3px)}
+
+/* ═══════════════════════════════════════════════════════════════
+   SCROLL ANIMATIONS
+═══════════════════════════════════════════════════════════════ */
+[data-anim]{opacity:0;transition:opacity .7s var(--ease-out),transform .7s var(--ease-out)}
+[data-anim="fade-up"]{transform:translateY(36px)}
+[data-anim="fade-left"]{transform:translateX(-36px)}
+[data-anim="fade-right"]{transform:translateX(36px)}
+[data-anim="zoom"]{transform:scale(.94)}
+[data-anim="fade"]{transform:none}
+[data-anim].anim-in{opacity:1;transform:none}
+
+/* ═══════════════════════════════════════════════════════════════
+   HEADER
+═══════════════════════════════════════════════════════════════ */
+#nav{
+  position:fixed;top:0;left:0;right:0;z-index:900;
+  padding:1.25rem 0;
+  transition:padding .3s var(--ease),background .3s;
+}
+#nav.sticky{
+  padding:.8rem 0;
+  background:rgba(5,8,16,.75);
+  backdrop-filter:blur(20px) saturate(1.5);
+  border-bottom:1px solid var(--border);
+}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;gap:1rem}
+.logo{
+  display:flex;align-items:center;gap:.6rem;
+  font-size:1.4rem;font-weight:900;letter-spacing:-.04em;color:var(--white);
+}
+.logo-mark{
+  width:34px;height:34px;border-radius:9px;
+  background:linear-gradient(135deg,var(--blue),var(--cyan));
+  display:grid;place-items:center;font-size:1rem;
+  box-shadow:0 0 16px rgba(43,111,255,.5);
+}
+.logo-mark svg{width:18px;height:18px;fill:none;stroke:#fff;stroke-width:2.5;stroke-linecap:round}
+.nav-links{display:flex;align-items:center;gap:.1rem}
+.nav-links a{
+  font-size:.84rem;font-weight:500;color:var(--text-muted);
+  padding:.45rem .9rem;border-radius:8px;
+  transition:color .2s,background .2s;
+}
+.nav-links a:hover{color:var(--white);background:var(--white-15)}
+.nav-right{display:flex;align-items:center;gap:.75rem}
+.nav-demo{display:flex}
+.burger{
+  display:none;flex-direction:column;justify-content:center;gap:5px;
+  width:38px;height:38px;background:var(--white-15);border:1px solid var(--border-2);
+  border-radius:9px;cursor:pointer;padding:.5rem;
+}
+.burger span{display:block;height:1.5px;background:var(--white);border-radius:2px;transition:.3s var(--ease)}
+.burger.open span:nth-child(1){transform:translateY(6.5px) rotate(45deg)}
+.burger.open span:nth-child(2){opacity:0;transform:scaleX(0)}
+.burger.open span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg)}
+.mobile-menu{
+  display:none;flex-direction:column;gap:.25rem;
+  padding:1rem 0 1.5rem;border-top:1px solid var(--border);margin-top:.75rem;
+}
+.mobile-menu a{
+  font-weight:500;color:var(--text-muted);padding:.65rem 1rem;
+  border-radius:10px;transition:.2s;
+}
+.mobile-menu a:hover{color:var(--white);background:var(--white-15)}
+.mobile-menu .btn{margin-top:.5rem;justify-content:center}
+@media(max-width:860px){
+  .nav-links,.nav-demo{display:none}
+  .burger{display:flex}
+  .mobile-menu.open{display:flex}
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   HERO
+═══════════════════════════════════════════════════════════════ */
+#hero{
+  min-height:100vh;
+  display:grid;place-items:center;
+  padding:8rem 0 5rem;
+  position:relative;overflow:hidden;
+}
+/* Animated mesh gradient */
+.hero-mesh{
+  position:absolute;inset:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% -10%,rgba(43,111,255,.18) 0%,transparent 70%),
+    radial-gradient(ellipse 50% 40% at 85% 60%,rgba(0,198,255,.1) 0%,transparent 60%),
+    radial-gradient(ellipse 40% 40% at 10% 80%,rgba(43,111,255,.08) 0%,transparent 60%);
+  animation:meshMove 12s ease-in-out infinite alternate;
+}
+@keyframes meshMove{
+  0%{background-position:0 0,0 0,0 0}
+  100%{
+    background:
+      radial-gradient(ellipse 80% 60% at 55% -5%,rgba(43,111,255,.2) 0%,transparent 70%),
+      radial-gradient(ellipse 50% 40% at 80% 65%,rgba(0,198,255,.12) 0%,transparent 60%),
+      radial-gradient(ellipse 40% 40% at 15% 75%,rgba(43,111,255,.1) 0%,transparent 60%);
+  }
+}
+/* Grid lines */
+.hero-grid{
+  position:absolute;inset:0;pointer-events:none;
+  background-image:
+    linear-gradient(var(--border) 1px,transparent 1px),
+    linear-gradient(90deg,var(--border) 1px,transparent 1px);
+  background-size:60px 60px;
+  mask-image:radial-gradient(ellipse 80% 70% at 50% 50%,black 30%,transparent 100%);
+}
+/* Floating orbs */
+.orb{
+  position:absolute;border-radius:50%;filter:blur(80px);pointer-events:none;animation:orbDrift 8s ease-in-out infinite alternate;
+}
+.orb-1{width:500px;height:500px;background:rgba(43,111,255,.12);top:-150px;left:-100px}
+.orb-2{width:400px;height:400px;background:rgba(0,198,255,.08);bottom:-100px;right:-80px;animation-delay:-4s}
+.orb-3{width:300px;height:300px;background:rgba(43,111,255,.1);top:30%;left:60%;animation-delay:-2s}
+@keyframes orbDrift{0%{transform:translate(0,0)}100%{transform:translate(30px,20px)}}
+
+.hero-inner{
+  display:grid;grid-template-columns:1.1fr .9fr;gap:4rem;
+  align-items:center;position:relative;z-index:1;
+}
+.hero-kicker{
+  display:inline-flex;align-items:center;gap:.5rem;
+  font-size:.72rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--cyan);
+  background:rgba(0,198,255,.08);border:1px solid rgba(0,198,255,.2);
+  padding:.35rem 1rem;border-radius:100px;margin-bottom:1.5rem;
+}
+.hero-kicker-dot{width:6px;height:6px;border-radius:50%;background:var(--cyan);animation:blink 1.4s infinite}
+.hero-title{
+  font-size:clamp(2.8rem,5.5vw,5rem);
+  font-weight:900;line-height:1.02;letter-spacing:-.04em;
+  color:var(--white);margin-bottom:1.5rem;
+}
+.hero-title .line{display:block;overflow:hidden}
+.hero-title .line span{
+  display:block;
+  animation:slideUp .9s var(--ease-out) both;
+}
+.hero-title .line:nth-child(2) span{animation-delay:.08s}
+.hero-title .line:nth-child(3) span{animation-delay:.16s}
+@keyframes slideUp{from{transform:translateY(100%);opacity:0}to{transform:none;opacity:1}}
+.hero-sub{
+  font-size:1.12rem;color:var(--text-muted);line-height:1.75;
+  margin-bottom:2.25rem;max-width:480px;
+  animation:fadeIn .8s .35s var(--ease-out) both;
+}
+.hero-btns{
+  display:flex;flex-wrap:wrap;gap:1rem;
+  animation:fadeIn .8s .45s var(--ease-out) both;
+}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.hero-trust{
+  display:flex;align-items:center;gap:1.25rem;margin-top:2rem;
+  animation:fadeIn .8s .55s var(--ease-out) both;
+}
+.trust-avatars{display:flex}
+.trust-avatar{
+  width:32px;height:32px;border-radius:50%;border:2px solid var(--ink);
+  background:linear-gradient(135deg,var(--blue),var(--cyan));
+  display:grid;place-items:center;font-size:.65rem;font-weight:700;color:#fff;
+  margin-right:-10px;
+}
+.trust-text{font-size:.8rem;color:var(--text-muted);margin-left:18px}
+.trust-text strong{color:var(--white)}
+
+/* Hero visual */
+.hero-visual{position:relative;animation:fadeIn .9s .2s var(--ease-out) both}
+.dashboard-card{
+  background:rgba(22,29,46,.9);
+  border:1px solid var(--border-2);
+  border-radius:var(--radius-lg);
+  padding:1.5rem;
+  backdrop-filter:blur(20px);
+  box-shadow:var(--shadow-lg),0 0 0 1px rgba(43,111,255,.1);
+  animation:float 5s ease-in-out infinite;
+}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+/* Browser chrome */
+.dash-chrome{
+  display:flex;align-items:center;gap:.5rem;
+  padding-bottom:1rem;border-bottom:1px solid var(--border);margin-bottom:1.25rem;
+}
+.dash-dot{width:9px;height:9px;border-radius:50%}
+.d1{background:#ff5f57}.d2{background:#febc2e}.d3{background:#28c840}
+.dash-bar{
+  flex:1;background:var(--white-15);border-radius:6px;
+  padding:.28rem .75rem;font-size:.68rem;color:var(--text-muted);
+  font-family:var(--f-mono);margin-left:.4rem;
+}
+/* Dash content */
+.dash-header{
+  background:linear-gradient(135deg,var(--blue),rgba(43,111,255,.6));
+  border-radius:10px;padding:.85rem 1rem;
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:1rem;
+}
+.dh-left h4{font-size:.75rem;font-weight:700;color:rgba(255,255,255,.7);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.15rem}
+.dh-left p{font-size:1.4rem;font-weight:800;color:#fff}
+.dh-right{
+  background:rgba(255,255,255,.15);border-radius:8px;padding:.4rem .7rem;
+  font-size:.68rem;font-weight:700;color:#fff;display:flex;align-items:center;gap:.3rem;
+}
+.dh-arrow{color:#4ade80;font-size:.85rem}
+.dash-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.6rem;margin-bottom:1rem}
+.dash-mini{
+  background:var(--white-15);border-radius:9px;padding:.7rem .75rem;
+  border:1px solid var(--border);
+}
+.dm-label{font-size:.6rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.25rem}
+.dm-val{font-size:1rem;font-weight:800;color:var(--white)}
+.dm-val.green{color:#4ade80}.dm-val.blue{color:var(--blue-2)}
+/* Bar chart */
+.dash-chart{background:var(--white-15);border-radius:9px;padding:.75rem;border:1px solid var(--border)}
+.chart-label{font-size:.62rem;font-weight:600;color:var(--text-muted);margin-bottom:.6rem;text-transform:uppercase;letter-spacing:.08em}
+.bars{display:flex;align-items:flex-end;gap:.35rem;height:52px}
+.bar{
+  flex:1;border-radius:3px 3px 0 0;
+  background:linear-gradient(to top,var(--blue),var(--blue-2));
+  opacity:.7;
+  animation:growBar 1s var(--ease-out) both;
+}
+@keyframes growBar{from{height:0!important}to{}}
+.bar.active{opacity:1;background:linear-gradient(to top,var(--blue),var(--cyan))}
+.bar:nth-child(1){height:35%;animation-delay:.1s}
+.bar:nth-child(2){height:55%;animation-delay:.15s}
+.bar:nth-child(3){height:42%;animation-delay:.2s}
+.bar:nth-child(4){height:70%;animation-delay:.25s}
+.bar:nth-child(5){height:58%;animation-delay:.3s}
+.bar:nth-child(6){height:90%;animation-delay:.35s}
+.bar:nth-child(7){height:75%;animation-delay:.4s;class:"active"}
+
+/* Floating chips on visual */
+.float-chip{
+  position:absolute;
+  background:rgba(22,29,46,.95);
+  border:1px solid var(--border-2);
+  border-radius:var(--radius-sm);
+  padding:.55rem .9rem;
+  display:flex;align-items:center;gap:.55rem;
+  font-size:.78rem;font-weight:600;color:var(--white);
+  box-shadow:var(--shadow);
+  backdrop-filter:blur(12px);
+}
+.fc-1{top:-1.25rem;right:1rem;animation:float 4s 1s ease-in-out infinite}
+.fc-2{bottom:.5rem;left:-1.5rem;animation:float 4.5s 2.5s ease-in-out infinite}
+.fc-icon{font-size:1.1rem}
+.fc-green{color:#4ade80;font-size:.68rem;font-weight:700;display:block}
+.fc-sub{color:var(--text-muted);font-size:.65rem;font-weight:400;display:block}
+
+@media(max-width:820px){
+  .hero-inner{grid-template-columns:1fr;text-align:center}
+  .hero-sub{margin-inline:auto}
+  .hero-btns{justify-content:center}
+  .hero-trust{justify-content:center}
+  .hero-visual{display:none}
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   LOGOS / SOCIAL PROOF STRIP
+═══════════════════════════════════════════════════════════════ */
+#logos{
+  padding:2.5rem 0;
+  border-top:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+  background:linear-gradient(90deg,var(--ink) 0%,var(--ink-2) 50%,var(--ink) 100%);
+}
+.logos-label{
+  text-align:center;font-size:.7rem;font-weight:600;letter-spacing:.15em;
+  text-transform:uppercase;color:var(--text-muted);margin-bottom:1.5rem;
+}
+.logos-track{
+  display:flex;align-items:center;justify-content:center;
+  flex-wrap:wrap;gap:1.5rem 3rem;
+}
+.logo-pill{
+  display:flex;align-items:center;gap:.5rem;
+  font-size:.85rem;font-weight:700;color:var(--text-muted);
+  padding:.5rem 1.25rem;border-radius:100px;
+  border:1px solid var(--border);
+  transition:.25s;
+}
+.logo-pill:hover{color:var(--white);border-color:var(--border-2)}
+.logo-pill span{font-size:1rem}
+
+/* ═══════════════════════════════════════════════════════════════
+   FEATURES / VALUE
+═══════════════════════════════════════════════════════════════ */
+#valor{padding:7rem 0;background:var(--ink)}
+.valor-layout{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:5rem;align-items:center;
+}
+.valor-text .lead{margin-top:1rem;margin-bottom:2rem}
+.valor-features{display:flex;flex-direction:column;gap:.75rem;margin-top:1.5rem}
+.vf-item{
+  display:flex;align-items:center;gap:.75rem;
+  font-size:.9rem;color:var(--text-muted);
+}
+.vf-check{
+  width:20px;height:20px;border-radius:6px;
+  background:rgba(43,111,255,.2);border:1px solid rgba(43,111,255,.3);
+  display:grid;place-items:center;flex-shrink:0;
+  font-size:.6rem;color:var(--blue-2);font-weight:700;
+}
+.valor-cards{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.vc{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+  padding:1.5rem;transition:border-color .3s,transform .3s var(--spring),box-shadow .3s;
+  cursor:default;
+}
+.vc:hover{border-color:rgba(43,111,255,.4);transform:translateY(-4px);box-shadow:0 16px 40px rgba(0,0,0,.4),0 0 0 1px rgba(43,111,255,.15)}
+.vc-icon{
+  font-size:1.5rem;margin-bottom:1rem;
+  width:44px;height:44px;border-radius:10px;
+  background:rgba(43,111,255,.12);display:grid;place-items:center;
+  transition:.3s;
+}
+.vc:hover .vc-icon{background:rgba(43,111,255,.2);transform:scale(1.1)}
+.vc h4{font-size:.95rem;font-weight:700;color:var(--white);margin-bottom:.35rem}
+.vc p{font-size:.82rem;color:var(--text-muted);line-height:1.6}
+.vc.span-2{grid-column:span 2}
+@media(max-width:820px){
+  .valor-layout{grid-template-columns:1fr;gap:3rem}
+  .vc.span-2{grid-column:span 1}
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SERVICES
+═══════════════════════════════════════════════════════════════ */
+#servicios{
+  padding:7rem 0;
+  background:var(--ink-2);
+  position:relative;overflow:hidden;
+}
+#servicios::before{
+  content:'';position:absolute;
+  top:-200px;left:50%;transform:translateX(-50%);
+  width:800px;height:400px;
+  background:radial-gradient(ellipse,rgba(43,111,255,.1) 0%,transparent 70%);
+  pointer-events:none;
+}
+.section-head{text-align:center;margin-bottom:3.5rem}
+.section-head .lead{margin:1rem auto 0}
+.services-grid{
+  display:grid;grid-template-columns:repeat(2,1fr);gap:1.25rem;
+}
+.svc{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius-lg);
+  padding:2rem;
+  position:relative;overflow:hidden;
+  transition:border-color .3s,transform .35s var(--spring),box-shadow .3s;
+  cursor:default;
+  group:true;
+}
+.svc::before{
+  content:'';position:absolute;
+  inset:0;opacity:0;
+  background:linear-gradient(135deg,rgba(43,111,255,.06) 0%,transparent 60%);
+  transition:opacity .3s;
+}
+.svc:hover::before{opacity:1}
+.svc:hover{
+  border-color:rgba(43,111,255,.35);
+  transform:translateY(-6px);
+  box-shadow:0 24px 60px rgba(0,0,0,.5),0 0 0 1px rgba(43,111,255,.12);
+}
+.svc-num{
+  font-family:var(--f-mono);font-size:.7rem;font-weight:500;
+  color:var(--text-muted);margin-bottom:1.25rem;
+  display:flex;align-items:center;gap:.5rem;
+}
+.svc-num::after{content:'';flex:1;height:1px;background:var(--border)}
+.svc-emoji{font-size:2rem;margin-bottom:1rem;display:block;transition:transform .3s var(--spring)}
+.svc:hover .svc-emoji{transform:scale(1.15) rotate(-5deg)}
+.svc h3{font-size:1.15rem;font-weight:700;color:var(--white);margin-bottom:.6rem}
+.svc p{font-size:.875rem;color:var(--text-muted);line-height:1.7}
+.svc-link{
+  display:inline-flex;align-items:center;gap:.4rem;
+  margin-top:1.25rem;font-size:.82rem;font-weight:700;
+  color:var(--blue-2);transition:gap .2s var(--spring),color .2s;
+}
+.svc:hover .svc-link{gap:.7rem;color:var(--cyan)}
+.svc-corner{
+  position:absolute;top:-30px;right:-30px;
+  width:120px;height:120px;border-radius:50%;
+  background:radial-gradient(circle,rgba(43,111,255,.12) 0%,transparent 70%);
+  transition:.3s;
+}
+.svc:hover .svc-corner{background:radial-gradient(circle,rgba(43,111,255,.22) 0%,transparent 70%)}
+@media(max-width:680px){.services-grid{grid-template-columns:1fr}}
+
+/* ═══════════════════════════════════════════════════════════════
+   PORTFOLIO
+═══════════════════════════════════════════════════════════════ */
+#portafolio{padding:7rem 0;background:var(--ink)}
+.portfolio-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  grid-template-rows:auto auto;
+  gap:1.25rem;
+  margin-top:3.5rem;
+}
+.pf-card{
+  border-radius:var(--radius-lg);overflow:hidden;
+  border:1px solid var(--border);position:relative;
+  background:var(--surface);
+  transition:transform .35s var(--spring),box-shadow .35s,border-color .3s;
+  cursor:pointer;
+}
+.pf-card:hover{
+  transform:translateY(-6px) scale(1.01);
+  box-shadow:0 28px 70px rgba(0,0,0,.6),0 0 0 1px rgba(43,111,255,.2);
+  border-color:rgba(43,111,255,.3);
+}
+.pf-thumb{
+  height:200px;position:relative;overflow:hidden;
+  display:flex;align-items:center;justify-content:center;
+}
+.pt-ferreteria{background:linear-gradient(135deg,#0f1f40 0%,#1a3a80 60%,#0f2b6b 100%)}
+.pt-barberia{background:linear-gradient(135deg,#12071e 0%,#2a0f5c 60%,#1a0d3d 100%)}
+.pt-tienda{background:linear-gradient(135deg,#071a10 0%,#0e4a26 60%,#053d1a 100%)}
+.pt-factura{background:linear-gradient(135deg,#071526 0%,#0d2d58 60%,#051528 100%)}
+/* Mini browser inside portfolio */
+.mini-br{
+  width:78%;
+  background:rgba(255,255,255,.06);
+  border-radius:8px;overflow:hidden;
+  border:1px solid rgba(255,255,255,.12);
+  box-shadow:0 8px 24px rgba(0,0,0,.4);
+  transition:transform .4s var(--spring);
+}
+.pf-card:hover .mini-br{transform:translateY(-4px) scale(1.03)}
+.mb-top{
+  background:rgba(0,0,0,.3);
+  padding:.35rem .6rem;display:flex;gap:.28rem;align-items:center;
+}
+.mb-d{width:7px;height:7px;border-radius:50%}
+.mb-d:nth-child(1){background:#ff5f57}.mb-d:nth-child(2){background:#febc2e}.mb-d:nth-child(3){background:#28c840}
+.mb-body{padding:.55rem}
+.mb-r{height:5.5px;background:rgba(255,255,255,.18);border-radius:3px;margin-bottom:.3rem}
+.mb-r.s{width:55%}.mb-r.xs{width:35%}.mb-r.acc{background:rgba(43,111,255,.6);width:40%}
+.mb-cols{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.28rem;margin-top:.35rem}
+.mb-col{background:rgba(255,255,255,.08);border-radius:3px;height:18px}
+/* Hover overlay */
+.pf-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(to top,rgba(5,8,16,.95) 0%,rgba(5,8,16,.3) 60%,transparent 100%);
+  display:flex;align-items:flex-end;padding:1.25rem;
+  opacity:0;transition:opacity .3s;
+}
+.pf-card:hover .pf-overlay{opacity:1}
+.pf-ov-btn{
+  display:inline-flex;align-items:center;gap:.4rem;
+  background:var(--blue);color:#fff;
+  font-size:.78rem;font-weight:700;padding:.45rem 1rem;border-radius:100px;
+}
+.pf-info{padding:1.25rem 1.5rem}
+.pf-tag{font-size:.65rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--blue-2);margin-bottom:.3rem}
+.pf-card h3{font-size:1rem;font-weight:700;color:var(--white);margin-bottom:.3rem}
+.pf-card p{font-size:.82rem;color:var(--text-muted)}
+@media(max-width:700px){.portfolio-grid{grid-template-columns:1fr}}
+
+/* ═══════════════════════════════════════════════════════════════
+   SOLUTIONS SECTION
+═══════════════════════════════════════════════════════════════ */
+#soluciones{
+  padding:7rem 0;
+  background:var(--ink-2);
+  position:relative;overflow:hidden;
+}
+.sol-layout{display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:center}
+.sol-list{display:flex;flex-direction:column;gap:.75rem;margin-top:1.75rem}
+.sol-item{
+  display:flex;align-items:flex-start;gap:1rem;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius);padding:1.1rem 1.25rem;
+  transition:border-color .25s,transform .25s var(--spring),box-shadow .25s;
+}
+.sol-item:hover{
+  border-color:rgba(43,111,255,.35);
+  transform:translateX(6px);
+  box-shadow:0 8px 24px rgba(0,0,0,.35);
+}
+.sol-ico{
+  width:38px;height:38px;border-radius:9px;
+  background:rgba(43,111,255,.15);border:1px solid rgba(43,111,255,.2);
+  display:grid;place-items:center;font-size:1rem;flex-shrink:0;
+  transition:.25s;
+}
+.sol-item:hover .sol-ico{background:rgba(43,111,255,.25)}
+.sol-item h5{font-size:.9rem;font-weight:700;color:var(--white);margin-bottom:.15rem}
+.sol-item p{font-size:.8rem;color:var(--text-muted)}
+/* Glass panel */
+.sol-panel{
+  background:linear-gradient(145deg,rgba(22,29,46,.9) 0%,rgba(11,15,26,.9) 100%);
+  border:1px solid var(--border-2);
+  border-radius:var(--radius-xl);padding:2.25rem;
+  backdrop-filter:blur(20px);
+  box-shadow:0 40px 80px rgba(0,0,0,.5),0 0 0 1px rgba(43,111,255,.08);
+  position:relative;overflow:hidden;
+}
+.sol-panel::before{
+  content:'';position:absolute;
+  top:-60px;right:-60px;width:200px;height:200px;
+  background:radial-gradient(circle,rgba(43,111,255,.2) 0%,transparent 70%);border-radius:50%;
+}
+.sol-panel-title{font-size:1.15rem;font-weight:800;color:var(--white);margin-bottom:1.5rem;position:relative}
+.sol-checks{display:flex;flex-direction:column;gap:.65rem;position:relative}
+.sol-check{
+  display:flex;align-items:center;gap:.75rem;
+  background:rgba(255,255,255,.04);border:1px solid var(--border);
+  border-radius:10px;padding:.7rem 1rem;font-size:.88rem;color:var(--text);font-weight:500;
+  transition:.2s;
+}
+.sol-check:hover{background:rgba(43,111,255,.08);border-color:rgba(43,111,255,.2)}
+.sc-icon{
+  width:22px;height:22px;border-radius:6px;
+  background:rgba(43,111,255,.25);
+  display:grid;place-items:center;font-size:.62rem;color:var(--cyan);font-weight:700;flex-shrink:0;
+}
+.sol-cta-box{
+  margin-top:1.5rem;padding:1.25rem;
+  background:linear-gradient(135deg,rgba(43,111,255,.2),rgba(0,198,255,.1));
+  border:1px solid rgba(43,111,255,.25);border-radius:var(--radius);
+  text-align:center;font-size:.88rem;color:var(--text);font-weight:500;position:relative;
+}
+.sol-cta-box strong{display:block;font-size:1rem;color:var(--white);margin-bottom:.3rem}
+@media(max-width:820px){.sol-layout{grid-template-columns:1fr;gap:3rem}}
+
+/* ═══════════════════════════════════════════════════════════════
+   PRICING
+═══════════════════════════════════════════════════════════════ */
+#precios{padding:7rem 0;background:var(--ink);position:relative;overflow:hidden}
+#precios::after{
+  content:'';position:absolute;
+  top:0;left:50%;transform:translateX(-50%);
+  width:600px;height:300px;
+  background:radial-gradient(ellipse,rgba(43,111,255,.09) 0%,transparent 70%);
+  pointer-events:none;
+}
+.pricing-toggle{
+  display:flex;align-items:center;justify-content:center;gap:1rem;
+  margin:2rem 0 3rem;font-size:.88rem;color:var(--text-muted);
+}
+.toggle-track{
+  width:46px;height:24px;background:var(--surface);
+  border:1px solid var(--border-2);border-radius:100px;
+  position:relative;cursor:pointer;transition:.2s;
+}
+.toggle-track.on{background:var(--blue)}
+.toggle-thumb{
+  position:absolute;top:2px;left:2px;
+  width:18px;height:18px;border-radius:50%;background:#fff;
+  transition:.25s var(--spring);
+}
+.toggle-track.on .toggle-thumb{transform:translateX(22px)}
+.save-badge{
+  background:rgba(43,111,255,.15);border:1px solid rgba(43,111,255,.25);
+  color:var(--blue-2);font-size:.65rem;font-weight:700;letter-spacing:.08em;
+  text-transform:uppercase;padding:.2rem .6rem;border-radius:100px;
+}
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem}
+.pc{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius-lg);padding:2rem;
+  position:relative;transition:transform .35s var(--spring),box-shadow .35s,border-color .3s;
+}
+.pc:hover{transform:translateY(-6px);box-shadow:0 24px 60px rgba(0,0,0,.5)}
+.pc.featured{
+  background:linear-gradient(145deg,#0f1f4a 0%,#0a1628 100%);
+  border-color:rgba(43,111,255,.4);
+  box-shadow:0 0 0 1px rgba(43,111,255,.2),0 20px 60px rgba(43,111,255,.15);
+}
+.pc.featured:hover{box-shadow:0 0 0 1px rgba(43,111,255,.4),0 28px 70px rgba(43,111,255,.25)}
+.pc-badge{
+  position:absolute;top:-1px;left:50%;transform:translateX(-50%);
+  background:linear-gradient(90deg,var(--blue),var(--cyan));
+  color:#fff;font-size:.65rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  padding:.3rem 1.2rem;border-radius:0 0 12px 12px;white-space:nowrap;
+}
+.pc-plan{font-size:.68rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--blue-2);margin-bottom:.5rem}
+.pc h3{font-size:1.2rem;font-weight:800;color:var(--white);margin-bottom:1rem}
+.pc-price{display:flex;align-items:baseline;gap:.2rem;margin-bottom:.5rem}
+.pc-cur{font-size:1.2rem;font-weight:700;color:var(--text-muted)}
+.pc-amt{font-size:3rem;font-weight:900;line-height:1;color:var(--white);letter-spacing:-.04em}
+.pc-per{font-size:.82rem;color:var(--text-muted)}
+.pc-desc{font-size:.82rem;color:var(--text-muted);margin-bottom:1.5rem;padding-bottom:1.5rem;border-bottom:1px solid var(--border)}
+.pc-feats{display:flex;flex-direction:column;gap:.65rem;margin-bottom:1.75rem}
+.pf-feat{display:flex;align-items:flex-start;gap:.6rem;font-size:.85rem;color:var(--text-muted)}
+.pf-yes{color:#4ade80;font-size:.75rem;margin-top:.1rem;flex-shrink:0}
+.pf-no{color:var(--text-muted);opacity:.3;font-size:.75rem;margin-top:.1rem;flex-shrink:0}
+.pf-feat.dim{opacity:.35}
+@media(max-width:768px){.pricing-grid{grid-template-columns:1fr;max-width:380px;margin-inline:auto}}
+
+/* ═══════════════════════════════════════════════════════════════
+   TESTIMONIALS
+═══════════════════════════════════════════════════════════════ */
+#testimonios{padding:7rem 0;background:var(--ink-2)}
+.test-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem;margin-top:3.5rem}
+.tc{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius-lg);padding:1.75rem;
+  position:relative;overflow:hidden;
+  transition:transform .3s var(--spring),border-color .3s,box-shadow .3s;
+}
+.tc:hover{transform:translateY(-5px);border-color:rgba(43,111,255,.3);box-shadow:0 20px 50px rgba(0,0,0,.4)}
+.tc::before{
+  content:'"';position:absolute;top:.75rem;right:1.25rem;
+  font-size:5rem;line-height:1;
+  color:rgba(43,111,255,.12);font-family:Georgia,serif;
+}
+.tc-stars{font-size:.9rem;color:#f59e0b;letter-spacing:.1em;margin-bottom:1rem}
+.tc blockquote{font-size:.9rem;color:var(--text-muted);line-height:1.75;font-style:italic;margin-bottom:1.25rem}
+.tc-author{display:flex;align-items:center;gap:.75rem}
+.tc-av{
+  width:40px;height:40px;border-radius:50%;
+  display:grid;place-items:center;font-weight:900;font-size:.9rem;color:#fff;flex-shrink:0;
+}
+.av-1{background:linear-gradient(135deg,#2b6fff,#00c6ff)}
+.av-2{background:linear-gradient(135deg,#059669,#34d399)}
+.av-3{background:linear-gradient(135deg,#7c3aed,#a78bfa)}
+.tc-name{font-weight:700;font-size:.88rem;color:var(--white)}
+.tc-biz{font-size:.75rem;color:var(--text-muted);margin-top:.05rem}
+@media(max-width:760px){.test-grid{grid-template-columns:1fr}}
+
+/* ═══════════════════════════════════════════════════════════════
+   CTA STRIP
+═══════════════════════════════════════════════════════════════ */
+#cta-strip{
+  padding:5rem 0;
+  background:linear-gradient(135deg,#0a1628 0%,#0f2251 50%,#061020 100%);
+  border-top:1px solid rgba(43,111,255,.2);
+  border-bottom:1px solid rgba(43,111,255,.2);
+  text-align:center;position:relative;overflow:hidden;
+}
+#cta-strip::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 60% 100% at 50% 50%,rgba(43,111,255,.15) 0%,transparent 70%);
+}
+.cta-strip-inner{position:relative}
+.cta-strip-inner h2{font-size:clamp(1.8rem,4vw,2.8rem);font-weight:900;color:var(--white);letter-spacing:-.03em;margin-bottom:.75rem}
+.cta-strip-inner p{font-size:1rem;color:var(--text-muted);max-width:480px;margin:0 auto 2rem}
+.cta-btns{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:1rem}
+
+/* ═══════════════════════════════════════════════════════════════
+   CONTACT
+═══════════════════════════════════════════════════════════════ */
+#contacto{padding:7rem 0;background:var(--ink)}
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:start}
+.contact-left .lead{margin-top:.75rem;margin-bottom:2rem}
+.wa-btn{
+  display:flex;align-items:center;gap:1rem;
+  background:#075e54;border:1px solid rgba(255,255,255,.12);
+  border-radius:var(--radius);padding:1.1rem 1.4rem;
+  font-weight:700;font-size:1rem;color:#fff;
+  transition:transform .25s var(--spring),box-shadow .25s,background .2s;
+  width:fit-content;
+  margin-bottom:1.25rem;
+}
+.wa-btn:hover{background:#128c7e;transform:translateY(-3px);box-shadow:0 12px 30px rgba(7,94,84,.4)}
+.wa-icon-wrap{
+  width:42px;height:42px;border-radius:10px;
+  background:rgba(255,255,255,.15);display:grid;place-items:center;font-size:1.4rem;flex-shrink:0;
+}
+.wa-sub{font-size:.72rem;font-weight:400;opacity:.75;display:block;margin-top:.1rem}
+.contact-note{
+  display:flex;align-items:center;gap:.6rem;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:10px;padding:.85rem 1rem;
+  font-size:.83rem;color:var(--text-muted);
+}
+.contact-note strong{color:var(--white)}
+/* Form */
+.contact-form{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius-xl);padding:2.25rem;
+}
+.cf-title{font-size:1.1rem;font-weight:800;color:var(--white);margin-bottom:.35rem}
+.cf-sub{font-size:.82rem;color:var(--text-muted);margin-bottom:1.75rem}
+.fg{margin-bottom:1.1rem}
+.fg label{display:block;font-size:.78rem;font-weight:600;color:var(--text-muted);margin-bottom:.4rem;letter-spacing:.04em;text-transform:uppercase}
+.fg input,.fg textarea,.fg select{
+  width:100%;background:var(--ink-2);
+  border:1.5px solid var(--border);border-radius:var(--radius-sm);
+  padding:.8rem 1rem;font-family:var(--f-display);font-size:.9rem;
+  color:var(--white);outline:none;transition:border-color .2s,box-shadow .2s;
+  resize:vertical;
+}
+.fg input::placeholder,.fg textarea::placeholder{color:var(--text-muted)}
+.fg input:focus,.fg textarea:focus,.fg select:focus{
+  border-color:var(--blue);
+  box-shadow:0 0 0 3px rgba(43,111,255,.15);
+}
+.fg select{color:var(--white);cursor:pointer}
+.fg select option{background:var(--ink-2)}
+.fg textarea{min-height:90px}
+.cf-submit{width:100%;justify-content:center;border-radius:var(--radius-sm);padding:1rem}
+.form-ok{display:none;text-align:center;padding:2rem}
+.form-ok .ok-icon{font-size:3rem;margin-bottom:.75rem}
+.form-ok strong{display:block;font-size:1.1rem;font-weight:800;color:var(--white);margin-bottom:.4rem}
+.form-ok p{font-size:.88rem;color:var(--text-muted)}
+@media(max-width:820px){.contact-grid{grid-template-columns:1fr}}
+
+/* ═══════════════════════════════════════════════════════════════
+   FOOTER
+═══════════════════════════════════════════════════════════════ */
+footer{
+  background:var(--ink-2);
+  border-top:1px solid var(--border);
+  padding:3.5rem 0 1.5rem;
+}
+.footer-grid{display:grid;grid-template-columns:1.8fr 1fr 1fr;gap:3rem;margin-bottom:3rem}
+.footer-brand .logo{margin-bottom:.85rem}
+.footer-brand p{font-size:.85rem;color:var(--text-muted);line-height:1.7;max-width:240px}
+.footer-socials{display:flex;gap:.55rem;margin-top:1.25rem}
+.social{
+  width:34px;height:34px;border-radius:8px;
+  background:var(--white-15);border:1px solid var(--border);
+  display:grid;place-items:center;font-size:.85rem;color:var(--text-muted);
+  transition:.2s;cursor:pointer;
+}
+.social:hover{background:rgba(43,111,255,.2);border-color:rgba(43,111,255,.4);color:var(--white)}
+.footer-col h5{font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--white);margin-bottom:1rem}
+.footer-col ul{display:flex;flex-direction:column;gap:.5rem}
+.footer-col ul li a{font-size:.84rem;color:var(--text-muted);transition:.2s}
+.footer-col ul li a:hover{color:var(--white)}
+.footer-bottom{
+  border-top:1px solid var(--border);padding-top:1.5rem;
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem;
+  font-size:.78rem;color:var(--text-muted);
+}
+.footer-bottom a{color:var(--blue-2)}
+@media(max-width:760px){.footer-grid{grid-template-columns:1fr;gap:2rem}}
+
+/* ═══════════════════════════════════════════════════════════════
+   SCROLL TOP
+═══════════════════════════════════════════════════════════════ */
+.back-top{
+  position:fixed;bottom:1.75rem;right:1.75rem;
+  width:42px;height:42px;border-radius:12px;
+  background:var(--blue);color:#fff;
+  display:grid;place-items:center;font-size:1rem;
+  cursor:pointer;border:none;
+  opacity:0;pointer-events:none;
+  transition:opacity .3s,transform .3s var(--spring),box-shadow .3s;
+  box-shadow:0 4px 20px rgba(43,111,255,.4);
+  z-index:800;
+}
+.back-top.show{opacity:1;pointer-events:auto}
+.back-top:hover{transform:translateY(-3px);box-shadow:0 8px 28px rgba(43,111,255,.5)}
+
+/* ═══════════════════════════════════════════════════════════════
+   SECTION DIVIDERS
+═══════════════════════════════════════════════════════════════ */
+.div-line{
+  width:60px;height:3px;border-radius:2px;
+  background:linear-gradient(90deg,var(--blue),var(--cyan));
+  margin:1rem 0 1.5rem;
+}
+.div-center{margin-inline:auto}
+</style>
+</head>
+<body>
+
+<!-- Cursor -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     NAVIGATION
+═══════════════════════════════════════════════════════════════ -->
+<header id="nav">
+  <div class="wrap">
+    <div class="nav-inner">
+      <a href="#hero" class="logo">
+        <div class="logo-mark">
+          <svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        </div>
+        WebBoost
+      </a>
+      <nav class="nav-links">
+        <a href="#valor">Inicio</a>
+        <a href="#servicios">Servicios</a>
+        <a href="#portafolio">Portafolio</a>
+        <a href="#soluciones">Soluciones</a>
+        <a href="#precios">Precios</a>
+        <a href="#contacto">Contacto</a>
+      </nav>
+      <div class="nav-right">
+        <a href="#contacto" class="btn btn-primary nav-demo">Solicitar demo</a>
+        <button class="burger" id="burger">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+    <div class="mobile-menu" id="mobileMenu">
+      <a href="#valor">Inicio</a>
+      <a href="#servicios">Servicios</a>
+      <a href="#portafolio">Portafolio</a>
+      <a href="#soluciones">Soluciones</a>
+      <a href="#precios">Precios</a>
+      <a href="#contacto">Contacto</a>
+      <a href="#contacto" class="btn btn-primary">Solicitar demo gratis →</a>
+    </div>
+  </div>
+</header>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     HERO
+═══════════════════════════════════════════════════════════════ -->
+<section id="hero">
+  <div class="hero-mesh"></div>
+  <div class="hero-grid"></div>
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+  <div class="wrap">
+    <div class="hero-inner">
+      <div>
+        <div class="hero-kicker"><span class="hero-kicker-dot"></span> Soluciones digitales para negocios</div>
+        <h1 class="hero-title">
+          <span class="line"><span>Haz crecer</span></span>
+          <span class="line"><span>tu negocio <em class="gradient-text">digital</em></span></span>
+          <span class="line"><span>desde hoy.</span></span>
+        </h1>
+        <p class="hero-sub">Creamos páginas web, sistemas de ventas y herramientas digitales que convierten visitantes en clientes. Rápido, profesional y a tu medida.</p>
+        <div class="hero-btns">
+          <a href="#contacto" class="btn btn-primary btn-lg">
+            Solicitar demo gratis
+            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+          <a href="#portafolio" class="btn btn-ghost btn-lg">Ver portafolio</a>
+        </div>
+        <div class="hero-trust">
+          <div class="trust-avatars">
+            <div class="trust-avatar">C</div>
+            <div class="trust-avatar" style="background:linear-gradient(135deg,#059669,#34d399)">M</div>
+            <div class="trust-avatar" style="background:linear-gradient(135deg,#7c3aed,#a78bfa)">A</div>
+          </div>
+          <div class="trust-text"><strong>+120 negocios</strong> ya crecen con WebBoost</div>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="dashboard-card">
+          <div class="dash-chrome">
+            <div class="dash-dot d1"></div>
+            <div class="dash-dot d2"></div>
+            <div class="dash-dot d3"></div>
+            <div class="dash-bar">miferreteria.webboost.io</div>
+          </div>
+          <div class="dash-header">
+            <div class="dh-left">
+              <h4>Ventas del mes</h4>
+              <p>$4,820</p>
+            </div>
+            <div class="dh-right"><span class="dh-arrow">▲</span>+34%</div>
+          </div>
+          <div class="dash-grid">
+            <div class="dash-mini"><div class="dm-label">Pedidos</div><div class="dm-val green">128</div></div>
+            <div class="dash-mini"><div class="dm-label">Clientes</div><div class="dm-val blue">94</div></div>
+            <div class="dash-mini"><div class="dm-label">Facturas</div><div class="dm-val">47</div></div>
+          </div>
+          <div class="dash-chart">
+            <div class="chart-label">Actividad semanal</div>
+            <div class="bars">
+              <div class="bar"></div>
+              <div class="bar"></div>
+              <div class="bar"></div>
+              <div class="bar"></div>
+              <div class="bar"></div>
+              <div class="bar active"></div>
+              <div class="bar"></div>
+            </div>
+          </div>
+        </div>
+        <div class="float-chip fc-1">
+          <span class="fc-icon">📈</span>
+          <div>
+            <span class="fc-green">▲ Ventas +34%</span>
+            <span class="fc-sub">vs mes anterior</span>
+          </div>
+        </div>
+        <div class="float-chip fc-2">
+          <span class="fc-icon">✅</span>
+          <div>
+            <span style="font-size:.72rem;color:var(--white);font-weight:700;display:block">Pedido confirmado</span>
+            <span class="fc-sub">Vía WhatsApp · ahora</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     LOGO STRIP
+═══════════════════════════════════════════════════════════════ -->
+<section id="logos">
+  <div class="wrap">
+    <p class="logos-label">Negocios que confían en WebBoost</p>
+    <div class="logos-track">
+      <div class="logo-pill"><span>🔧</span> Ferretería Don Carlos</div>
+      <div class="logo-pill"><span>✂️</span> Barbería The Kings</div>
+      <div class="logo-pill"><span>🛍️</span> Moda Express</div>
+      <div class="logo-pill"><span>🍕</span> Pizzería La Familia</div>
+      <div class="logo-pill"><span>💊</span> Farmacia Central</div>
+      <div class="logo-pill"><span>🔑</span> Inmobiliaria Plus</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     VALUE / WHY US
+═══════════════════════════════════════════════════════════════ -->
+<section id="valor">
+  <div class="wrap">
+    <div class="valor-layout">
+      <div data-anim="fade-right">
+        <p class="section-eyebrow">Por qué elegirnos</p>
+        <h2 class="h2">Tu negocio merece<br><span class="gradient-text">tecnología real</span></h2>
+        <div class="div-line"></div>
+        <p class="lead">No somos solo diseñadores de webs. Somos tu equipo digital completo: estrategia, desarrollo y soporte incluido para que puedas enfocarte en vender.</p>
+        <div class="valor-features">
+          <div class="vf-item"><div class="vf-check">✓</div> Más visibilidad y clientes desde Google y redes sociales</div>
+          <div class="vf-item"><div class="vf-check">✓</div> Procesos automatizados que ahorran horas cada semana</div>
+          <div class="vf-item"><div class="vf-check">✓</div> Sitios seguros, rápidos y optimizados para móvil</div>
+          <div class="vf-item"><div class="vf-check">✓</div> Soporte continuo incluido en todos los planes</div>
+        </div>
+        <div style="margin-top:2rem">
+          <a href="#contacto" class="btn btn-primary">Agendar demo gratis →</a>
+        </div>
+      </div>
+      <div class="valor-cards" data-anim="fade-left">
+        <div class="vc"><div class="vc-icon">👥</div><h4>Más clientes</h4><p>Presencia online profesional para que te encuentren fácilmente desde el celular.</p></div>
+        <div class="vc"><div class="vc-icon">⚡</div><h4>Automatización</h4><p>Procesos digitales que trabajan por ti 24 horas al día, 7 días a la semana.</p></div>
+        <div class="vc"><div class="vc-icon">🔒</div><h4>Seguro y rápido</h4><p>SSL, hosting premium y código optimizado para máxima velocidad de carga.</p></div>
+        <div class="vc"><div class="vc-icon">🛎️</div><h4>Soporte incluido</h4><p>Te acompañamos siempre. Nunca estarás solo frente a un problema técnico.</p></div>
+        <div class="vc span-2"><div class="vc-icon">🎯</div><h4>100% personalizado</h4><p>Cada negocio es único. Diseñamos exactamente lo que necesitas para crecer, no una plantilla genérica.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SERVICES
+═══════════════════════════════════════════════════════════════ -->
+<section id="servicios">
+  <div class="wrap">
+    <div class="section-head" data-anim="fade-up">
+      <p class="section-eyebrow">Nuestros servicios</p>
+      <h2 class="h2">Todo lo que necesitas<br><span class="gradient-text">para vender más</span></h2>
+      <p class="lead">Desde tu primera página web hasta sistemas completos de gestión, lo construimos todo para tu negocio.</p>
+    </div>
+    <div class="services-grid">
+      <div class="svc" data-anim="fade-up" style="--d:.05s">
+        <div class="svc-corner"></div>
+        <div class="svc-num">01</div>
+        <span class="svc-emoji">🌐</span>
+        <h3>Páginas Web para Negocios</h3>
+        <p>Sitios modernos, rápidos y atractivos con botón de WhatsApp integrado, dominio propio y diseño que convierte cada visita en una oportunidad de venta.</p>
+        <a href="#contacto" class="svc-link">Quiero mi web →</a>
+      </div>
+      <div class="svc" data-anim="fade-up" style="--d:.1s">
+        <div class="svc-corner"></div>
+        <div class="svc-num">02</div>
+        <span class="svc-emoji">🧾</span>
+        <h3>Sistemas de Facturación</h3>
+        <p>Genera facturas profesionales en segundos, listas para imprimir o enviar. Organiza ventas, controla cobros pendientes y mantén todo en perfecto orden.</p>
+        <a href="#contacto" class="svc-link">Ver demo →</a>
+      </div>
+      <div class="svc" data-anim="fade-up" style="--d:.15s">
+        <div class="svc-corner"></div>
+        <div class="svc-num">03</div>
+        <span class="svc-emoji">🛒</span>
+        <h3>Catálogos y Tiendas Online</h3>
+        <p>Muestra tus productos con fotos, precios y descripciones. Recibe pedidos por WhatsApp o con carrito de compras completo, disponible 24/7 para tus clientes.</p>
+        <a href="#contacto" class="svc-link">Crear catálogo →</a>
+      </div>
+      <div class="svc" data-anim="fade-up" style="--d:.2s">
+        <div class="svc-corner"></div>
+        <div class="svc-num">04</div>
+        <span class="svc-emoji">⚙️</span>
+        <h3>Automatización de Negocios</h3>
+        <p>Herramientas digitales a la medida de tu negocio: inventarios, reservas online, reportes automáticos y más. Vende más sin trabajar el doble.</p>
+        <a href="#contacto" class="svc-link">Automatizar ahora →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     PORTFOLIO
+═══════════════════════════════════════════════════════════════ -->
+<section id="portafolio">
+  <div class="wrap">
+    <div class="section-head" data-anim="fade-up">
+      <p class="section-eyebrow">Portafolio</p>
+      <h2 class="h2">Proyectos que<br><span class="gradient-text">hablan por sí solos</span></h2>
+      <p class="lead">Soluciones digitales que han transformado negocios reales y multiplicado sus ventas.</p>
+    </div>
+    <div class="portfolio-grid">
+      <!-- Ferretería -->
+      <div class="pf-card" data-anim="zoom" style="--d:.05s">
+        <div class="pf-thumb pt-ferreteria">
+          <div class="mini-br">
+            <div class="mb-top"><div class="mb-d"></div><div class="mb-d"></div><div class="mb-d"></div></div>
+            <div class="mb-body">
+              <div class="mb-r" style="background:rgba(251,191,36,.4);width:50%"></div>
+              <div class="mb-r"></div><div class="mb-r s"></div>
+              <div class="mb-r acc"></div>
+              <div class="mb-cols">
+                <div class="mb-col" style="background:rgba(251,191,36,.15)"></div>
+                <div class="mb-col"></div><div class="mb-col"></div>
+                <div class="mb-col"></div>
+                <div class="mb-col" style="background:rgba(251,191,36,.15)"></div>
+                <div class="mb-col"></div>
+              </div>
+            </div>
+          </div>
+          <div class="pf-overlay"><span class="pf-ov-btn">Ver demo →</span></div>
+        </div>
+        <div class="pf-info">
+          <div class="pf-tag">🔧 Ferretería · Web + Catálogo</div>
+          <h3>Ferretería Don Carlos</h3>
+          <p>Catálogo con +500 productos y pedidos vía WhatsApp. Ventas +60% en 2 meses.</p>
+        </div>
+      </div>
+      <!-- Barbería -->
+      <div class="pf-card" data-anim="zoom" style="--d:.1s">
+        <div class="pf-thumb pt-barberia">
+          <div class="mini-br">
+            <div class="mb-top"><div class="mb-d"></div><div class="mb-d"></div><div class="mb-d"></div></div>
+            <div class="mb-body">
+              <div class="mb-r" style="background:rgba(167,139,250,.5);width:55%"></div>
+              <div class="mb-r"></div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:.3rem;margin-top:.35rem">
+                <div style="background:rgba(167,139,250,.2);border-radius:3px;height:22px"></div>
+                <div style="background:rgba(167,139,250,.2);border-radius:3px;height:22px"></div>
+                <div style="background:rgba(255,255,255,.07);border-radius:3px;height:22px"></div>
+                <div style="background:rgba(167,139,250,.35);border-radius:3px;height:22px"></div>
+              </div>
+              <div class="mb-r acc" style="margin-top:.35rem;background:rgba(167,139,250,.5);width:55%"></div>
+            </div>
+          </div>
+          <div class="pf-overlay"><span class="pf-ov-btn">Ver demo →</span></div>
+        </div>
+        <div class="pf-info">
+          <div class="pf-tag">✂️ Barbería · Web + Reservas</div>
+          <h3>Barbería The Kings</h3>
+          <p>Reservas online 24/7 y galería de cortes. Citas diarias aumentaron 3x.</p>
+        </div>
+      </div>
+      <!-- Tienda -->
+      <div class="pf-card" data-anim="zoom" style="--d:.15s">
+        <div class="pf-thumb pt-tienda">
+          <div class="mini-br">
+            <div class="mb-top"><div class="mb-d"></div><div class="mb-d"></div><div class="mb-d"></div></div>
+            <div class="mb-body">
+              <div class="mb-r" style="background:rgba(34,197,94,.4);width:50%"></div>
+              <div class="mb-r"></div>
+              <div class="mb-cols">
+                <div class="mb-col" style="background:rgba(34,197,94,.25)"></div>
+                <div class="mb-col"></div>
+                <div class="mb-col" style="background:rgba(34,197,94,.25)"></div>
+                <div class="mb-col"></div>
+                <div class="mb-col" style="background:rgba(34,197,94,.25)"></div>
+                <div class="mb-col"></div>
+              </div>
+              <div class="mb-r acc" style="background:rgba(34,197,94,.5);width:45%;margin-top:.35rem"></div>
+            </div>
+          </div>
+          <div class="pf-overlay"><span class="pf-ov-btn">Ver demo →</span></div>
+        </div>
+        <div class="pf-info">
+          <div class="pf-tag">🛍️ Tienda · Web + Pedidos online</div>
+          <h3>Moda Express</h3>
+          <p>Tienda con carrito e integración WhatsApp. +120 pedidos mensuales.</p>
+        </div>
+      </div>
+      <!-- Facturación -->
+      <div class="pf-card" data-anim="zoom" style="--d:.2s">
+        <div class="pf-thumb pt-factura">
+          <div class="mini-br">
+            <div class="mb-top"><div class="mb-d"></div><div class="mb-d"></div><div class="mb-d"></div></div>
+            <div class="mb-body">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.35rem">
+                <div style="width:50%;height:6px;background:rgba(255,255,255,.25);border-radius:3px"></div>
+                <div style="width:24%;height:13px;background:rgba(43,111,255,.7);border-radius:4px"></div>
+              </div>
+              <div style="border:1px solid rgba(255,255,255,.08);border-radius:4px;padding:.3rem;margin-bottom:.3rem">
+                <div class="mb-r" style="width:40%"></div>
+                <div class="mb-r"></div><div class="mb-r s"></div>
+              </div>
+              <div style="display:flex;justify-content:flex-end;margin-bottom:.3rem">
+                <div style="width:40%;height:7px;background:rgba(43,111,255,.4);border-radius:3px"></div>
+              </div>
+              <div style="display:flex;gap:.3rem">
+                <div style="flex:1;height:14px;background:rgba(255,255,255,.07);border-radius:4px"></div>
+                <div style="width:34%;height:14px;background:rgba(43,111,255,.7);border-radius:4px"></div>
+              </div>
+            </div>
+          </div>
+          <div class="pf-overlay"><span class="pf-ov-btn">Ver demo →</span></div>
+        </div>
+        <div class="pf-info">
+          <div class="pf-tag">🧾 Sistema · Facturación Pro</div>
+          <h3>Sistema de Facturación</h3>
+          <p>Facturas en segundos, historial y exportación PDF. Usado por 40+ negocios.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SOLUTIONS
+═══════════════════════════════════════════════════════════════ -->
+<section id="soluciones">
+  <div class="wrap">
+    <div class="sol-layout">
+      <div data-anim="fade-right">
+        <p class="section-eyebrow">Soluciones completas</p>
+        <h2 class="h2">No solo webs.<br><span class="gradient-text">Un ecosistema digital</span></h2>
+        <div class="div-line"></div>
+        <p class="lead">Todo lo que tu negocio necesita para dominar internet está en un solo lugar.</p>
+        <div class="sol-list">
+          <div class="sol-item">
+            <div class="sol-ico">🌐</div>
+            <div><h5>Página web profesional</h5><p>Diseño moderno adaptado a tu marca y público, desde el primer día.</p></div>
+          </div>
+          <div class="sol-item">
+            <div class="sol-ico">🧾</div>
+            <div><h5>Sistema de facturación</h5><p>Genera y envía facturas al instante desde cualquier dispositivo.</p></div>
+          </div>
+          <div class="sol-item">
+            <div class="sol-ico">📊</div>
+            <div><h5>Control de ventas</h5><p>Registro de ingresos, gastos y reportes mensuales fáciles de entender.</p></div>
+          </div>
+          <div class="sol-item">
+            <div class="sol-ico">📱</div>
+            <div><h5>Catálogo digital</h5><p>Comparte tu catálogo actualizado por WhatsApp, link o código QR.</p></div>
+          </div>
+          <div class="sol-item">
+            <div class="sol-ico">💬</div>
+            <div><h5>Integración con WhatsApp</h5><p>Recibe pedidos y consultas directamente en tu teléfono, sin complicaciones.</p></div>
+          </div>
+        </div>
+      </div>
+      <div class="sol-panel" data-anim="fade-left">
+        <div class="sol-panel-title">✅ Todo lo que tu negocio necesita para crecer en internet</div>
+        <div class="sol-checks">
+          <div class="sol-check"><div class="sc-icon">✓</div>Presencia digital profesional y memorable</div>
+          <div class="sol-check"><div class="sc-icon">✓</div>Más clientes desde Google y redes sociales</div>
+          <div class="sol-check"><div class="sc-icon">✓</div>Ventas 24/7 sin que estés pendiente</div>
+          <div class="sol-check"><div class="sc-icon">✓</div>Procesos automáticos que ahorran tiempo</div>
+          <div class="sol-check"><div class="sc-icon">✓</div>Soporte técnico y actualizaciones incluidas</div>
+          <div class="sol-check"><div class="sc-icon">✓</div>Entrega inicial en 48–72 horas</div>
+          <div class="sol-check"><div class="sc-icon">✓</div>Sin contratos anuales, cancela cuando quieras</div>
+        </div>
+        <div class="sol-cta-box">
+          <strong>🎁 Demo gratis sin costo</strong>
+          Te mostramos cómo quedaría tu negocio antes de pagar un centavo.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     PRICING
+═══════════════════════════════════════════════════════════════ -->
+<section id="precios">
+  <div class="wrap">
+    <div class="section-head" data-anim="fade-up">
+      <p class="section-eyebrow">Planes y precios</p>
+      <h2 class="h2">Invierte en tu <span class="gradient-text">crecimiento</span></h2>
+      <p class="lead">Sin costos ocultos. Sin contratos anuales. Planes diseñados para que tu negocio crezca.</p>
+    </div>
+    <div class="pricing-toggle" data-anim="fade-up">
+      <span>Mensual</span>
+      <div class="toggle-track" id="toggleTrack" onclick="toggleBilling()">
+        <div class="toggle-thumb"></div>
+      </div>
+      <span>Anual <span class="save-badge">Ahorra 20%</span></span>
+    </div>
+    <div class="pricing-grid">
+      <!-- Básico -->
+      <div class="pc" data-anim="fade-up" style="--d:.05s">
+        <div class="pc-plan">Plan Básico</div>
+        <h3>Para empezar</h3>
+        <div class="pc-price">
+          <span class="pc-cur">$</span>
+          <span class="pc-amt" id="p1">20</span>
+          <span class="pc-per">/mes</span>
+        </div>
+        <p class="pc-desc">Ideal para emprendedores y negocios que dan sus primeros pasos en internet.</p>
+        <ul class="pc-feats">
+          <li class="pf-feat"><span class="pf-yes">✓</span> Página web hasta 5 secciones</li>
+          <li class="pf-feat"><span class="pf-yes">✓</span> Diseño responsive para celular</li>
+          <li class="pf-feat"><span class="pf-yes">✓</span> Botón WhatsApp integrado</li>
+          <li class="pf-feat"><span class="pf-yes">✓</span> Dominio personalizado incluido</li>
+          <li class="pf-feat"><span class="pf-yes">✓</span> Certificado SSL (HTTPS)</li>
+          <li class="pf-feat dim"><span class="pf-no">–</span> Sistema de facturación</li>
+          <li class="pf-feat dim"><span class="pf-no">–</span> Catálogo de productos</li>
+        </ul>
+        <a href="#contacto" class="btn btn-ghost" style="width:100%;justify-content:center">Empezar ahora →</a>
+      </div>
+      <!-- Negocio (featured) -->
+      <div class="pc featured" data-anim="fade-up" style="--d:.1s">
+        <div class="pc-badge">⭐ Más popular</div>
+        <div class="pc-plan">Plan Negocio</div>
+        <h3>El más elegido</h3>
+        <div class="pc-price">
+          <span class="pc-cur">$</span>
+          <span class="pc-amt" id="p2">35</span>
+          <span class="pc-per">/mes</span>
+        </div>
+        <p class="pc-desc" style="border-color:rgba(255,255,255,.08)">Perfecto para ferreterías, tiendas, barberías y negocios que quieren crecer rápido.</p>
+        <ul class="pc-feats">
+          <li class="pf-feat"><span class="pf-yes">✓</span> Todo el Plan Básico incluido</li>
+          <li class="pf-feat"><span class="pf-yes">✓</span> Catálogo digital hasta 100 productos</li>
+          <li class="pf-feat"><span class="pf-yes">✓</span> Sistema básico de facturación</li>
+          <li class="pf-feat"><span class="pf-yes">✓</span> Formulario de pedidos y contacto</li>
+          <li class="pf-feat"><span class="pf-yes">✓</span> Integración con redes sociales</li>
+          <li class="pf-feat"><span class="pf-yes">✓</span> Soporte por WhatsApp incluido</li>
+          <li class="pf-feat"><span class="pf-yes">✓</span> Actualizaciones de contenido</li>
+        </ul>
+        <a href="#contacto" class="btn btn-primary" style="width:100%;justify-content:center">Empezar ahora →</a>
+      </div>
+      <!-- Pro -->
+      <div class="pc" data-anim="fade-up" style="--d:.15s">
+        <div class="pc-plan">Plan Pro</div>
+        <h3>Para escalar</h3>
+        <div class="pc-price">
+          <span class="pc-cur">$</span>
+          <span class="pc-amt" id="p3">50</span>
+          <span class="pc-per">+/mes</span>
+        </div>
+        <p class="pc-desc">Soluciones a medida para negocios que quieren automatizar y escalar sin límites.</p>
+        <ul class="pc-feats">
+          <li class="pf-feat"><span class="pf-yes">✓</span> Todo el Plan Negocio incluido</li>
+          <li class="pf-feat"><span class="pf-yes">✓</span> Tienda online con carrito de compras</li>
+          <li class="pf-feat"><span class="pf-yes">✓</span> Catálogo ilimitado de productos</li>
+          <li class="pf-feat"><span class="pf-yes">✓</span> Sistema de reservas online</li>
+          <li class="pf-feat"><span class="pf-yes">✓</span> Reportes de ventas e inventario</li>
+          <li class="pf-feat"><span class="pf-yes">✓</span> Automatizaciones personalizadas</li>
+          <li class="pf-feat"><span class="pf-yes">✓</span> Soporte prioritario 24/7</li>
+        </ul>
+        <a href="#contacto" class="btn btn-ghost" style="width:100%;justify-content:center">Solicitar cotización →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     TESTIMONIALS
+═══════════════════════════════════════════════════════════════ */
+<section id="testimonios">
+  <div class="wrap">
+    <div class="section-head" data-anim="fade-up">
+      <p class="section-eyebrow">Testimonios</p>
+      <h2 class="h2">Lo que dicen nuestros<br><span class="gradient-text">clientes</span></h2>
+    </div>
+    <div class="test-grid">
+      <div class="tc" data-anim="fade-up" style="--d:.05s">
+        <div class="tc-stars">★★★★★</div>
+        <blockquote>"Desde que pusimos el catálogo online, los clientes piden por WhatsApp sin que yo los tenga que buscar. Mis ventas subieron más del 50% en dos meses. No me lo esperaba."</blockquote>
+        <div class="tc-author">
+          <div class="tc-av av-1">C</div>
+          <div>
+            <div class="tc-name">Carlos Hernández</div>
+            <div class="tc-biz">🔧 Ferretería Don Carlos</div>
+          </div>
+        </div>
+      </div>
+      <div class="tc" data-anim="fade-up" style="--d:.1s">
+        <div class="tc-stars">★★★★★</div>
+        <blockquote>"Antes llenaba mis citas por teléfono y perdía muchos clientes. Ahora los clientes reservan solos en línea y yo solo me preparo para el día. Fue el mejor cambio."</blockquote>
+        <div class="tc-author">
+          <div class="tc-av av-2">M</div>
+          <div>
+            <div class="tc-name">Miguel Torres</div>
+            <div class="tc-biz">✂️ Barbería The Kings</div>
+          </div>
+        </div>
+      </div>
+      <div class="tc" data-anim="fade-up" style="--d:.15s">
+        <div class="tc-stars">★★★★★</div>
+        <blockquote>"El sistema de facturación me cambió la vida. Antes tardaba 20 minutos en cada factura, ahora son 2 minutos y queda perfecta. Muy profesional y fácil de usar."</blockquote>
+        <div class="tc-author">
+          <div class="tc-av av-3">A</div>
+          <div>
+            <div class="tc-name">Ana Lucía Pérez</div>
+            <div class="tc-biz">🛍️ Moda Express</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     CTA STRIP
+═══════════════════════════════════════════════════════════════ -->
+<section id="cta-strip">
+  <div class="wrap">
+    <div class="cta-strip-inner" data-anim="zoom">
+      <h2>¿Listo para <span class="gradient-text">despegar</span>?</h2>
+      <p>En 30 minutos te mostramos cómo puede verse tu negocio en internet. Sin costos, sin compromisos.</p>
+      <div class="cta-btns">
+        <a href="#contacto" class="btn btn-primary btn-lg">🚀 Solicitar demo gratis</a>
+        <a href="https://wa.me/50300000000" target="_blank" class="btn btn-ghost btn-lg">💬 Chatear por WhatsApp</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     CONTACT
+═══════════════════════════════════════════════════════════════ -->
+<section id="contacto">
+  <div class="wrap">
+    <div class="contact-grid">
+      <div data-anim="fade-right">
+        <p class="section-eyebrow">Contáctanos</p>
+        <h2 class="h2">Te hacemos una<br><span class="gradient-text">demo gratis</span></h2>
+        <div class="div-line"></div>
+        <p class="lead">Sin compromisos. En 30 minutos te mostramos exactamente cómo puede verse tu negocio en internet.</p>
+        <a href="https://wa.me/50300000000?text=Hola%2C%20quiero%20una%20demo%20gratis%20de%20WebBoost" target="_blank" class="wa-btn">
+          <div class="wa-icon-wrap">📱</div>
+          <div>
+            Escríbenos por WhatsApp
+            <span class="wa-sub">Respondemos en menos de 1 hora</span>
+          </div>
+        </a>
+        <div class="contact-note">
+          🎁 <div><strong>Demo gratuita incluida</strong> — te mostramos una maqueta antes de pagar nada.</div>
+        </div>
+      </div>
+      <div class="contact-form" data-anim="fade-left">
+        <div class="cf-title">📋 Cuéntanos sobre tu negocio</div>
+        <div class="cf-sub">Completa el formulario y te contactamos en menos de 24 horas.</div>
+        <div id="formFields">
+          <div class="fg">
+            <label>Tu nombre</label>
+            <input type="text" id="nombre" placeholder="Ej: Carlos Hernández"/>
+          </div>
+          <div class="fg">
+            <label>Nombre de tu negocio</label>
+            <input type="text" id="negocio" placeholder="Ej: Ferretería Don Carlos"/>
+          </div>
+          <div class="fg">
+            <label>Tipo de negocio</label>
+            <select id="tipo">
+              <option value="">Selecciona...</option>
+              <option>Ferretería</option>
+              <option>Tienda de ropa / moda</option>
+              <option>Barbería / Salón de belleza</option>
+              <option>Restaurante / Comida</option>
+              <option>Farmacia</option>
+              <option>Servicios profesionales</option>
+              <option>Otro</option>
+            </select>
+          </div>
+          <div class="fg">
+            <label>¿Qué necesitas? (opcional)</label>
+            <textarea id="mensaje" placeholder="Ej: Quiero una página web con catálogo de productos y pedidos por WhatsApp..."></textarea>
+          </div>
+          <button class="btn btn-primary cf-submit" onclick="submitForm()">
+            🚀 Solicitar demo gratis
+            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+        </div>
+        <div class="form-ok" id="formOk">
+          <div class="ok-icon">🎉</div>
+          <strong>¡Mensaje enviado con éxito!</strong>
+          <p>Te contactaremos en menos de 24 horas para coordinar tu demo gratuita. ¡Gracias por confiar en WebBoost!</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     FOOTER
+═══════════════════════════════════════════════════════════════ -->
+<footer>
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="logo" style="margin-bottom:.85rem">
+          <div class="logo-mark">
+            <svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+          </div>
+          WebBoost
+        </div>
+        <p>Impulsamos negocios con tecnología. Soluciones digitales accesibles para pequeñas y medianas empresas.</p>
+        <div class="footer-socials">
+          <a class="social" href="#" title="Facebook">f</a>
+          <a class="social" href="#" title="Instagram">📷</a>
+          <a class="social" href="#" title="WhatsApp">💬</a>
+          <a class="social" href="#" title="TikTok">🎵</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h5>Servicios</h5>
+        <ul>
+          <li><a href="#servicios">Páginas web</a></li>
+          <li><a href="#servicios">Facturación</a></li>
+          <li><a href="#servicios">Catálogos online</a></li>
+          <li><a href="#servicios">Automatización</a></li>
+          <li><a href="#servicios">Tiendas online</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Empresa</h5>
+        <ul>
+          <li><a href="#valor">¿Por qué WebBoost?</a></li>
+          <li><a href="#portafolio">Portafolio</a></li>
+          <li><a href="#precios">Precios</a></li>
+          <li><a href="#testimonios">Testimonios</a></li>
+          <li><a href="#contacto">Contacto</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2025 WebBoost. Todos los derechos reservados.</span>
+      <span>Hecho con ❤️ para impulsar negocios locales</span>
+    </div>
+  </div>
+</footer>
+
+<button class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     JAVASCRIPT
+═══════════════════════════════════════════════════════════════ -->
+<script>
+/* ----- CUSTOM CURSOR ----- */
+const cursor = document.getElementById('cursor');
+const ring = document.getElementById('cursorRing');
+let rx=0,ry=0,mx=0,my=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cursor.style.left=mx+'px';cursor.style.top=my+'px'});
+(function animRing(){rx+=(mx-rx)*.12;ry+=(my-ry)*.12;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(animRing)})();
+document.querySelectorAll('a,button,.btn,.svc,.pc,.tc,.pf-card,.sol-item,.vc').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{ring.style.width='60px';ring.style.height='60px';ring.style.borderColor='rgba(43,111,255,.7)';cursor.style.opacity='0'});
+  el.addEventListener('mouseleave',()=>{ring.style.width='36px';ring.style.height='36px';ring.style.borderColor='rgba(43,111,255,.5)';cursor.style.opacity='1'});
+});
+
+/* ----- STICKY NAV ----- */
+const nav = document.getElementById('nav');
+window.addEventListener('scroll',()=>{
+  nav.classList.toggle('sticky',window.scrollY>60);
+  document.getElementById('backTop').classList.toggle('show',window.scrollY>500);
+});
+
+/* ----- HAMBURGER ----- */
+const burger=document.getElementById('burger');
+const mMenu=document.getElementById('mobileMenu');
+burger.addEventListener('click',()=>{
+  burger.classList.toggle('open');
+  mMenu.classList.toggle('open');
+});
+mMenu.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{
+  burger.classList.remove('open');mMenu.classList.remove('open');
+}));
+
+/* ----- SCROLL ANIMATIONS ----- */
+const anims=document.querySelectorAll('[data-anim]');
+const io=new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      const d=parseFloat(e.target.style.getPropertyValue('--d'))||0;
+      setTimeout(()=>e.target.classList.add('anim-in'),d*1000);
+      io.unobserve(e.target);
+    }
+  });
+},{threshold:.12});
+anims.forEach(el=>io.observe(el));
+
+/* ----- SMOOTH SCROLL ----- */
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
+  a.addEventListener('click',function(e){
+    const t=document.querySelector(this.getAttribute('href'));
+    if(t){e.preventDefault();window.scrollTo({top:t.getBoundingClientRect().top+window.scrollY-76,behavior:'smooth'})}
+  });
+});
+
+/* ----- BILLING TOGGLE ----- */
+let annual=false;
+const prices=[[20,16],[35,28],[50,40]];
+function toggleBilling(){
+  annual=!annual;
+  document.getElementById('toggleTrack').classList.toggle('on',annual);
+  ['p1','p2','p3'].forEach((id,i)=>{
+    document.getElementById(id).textContent=annual?prices[i][1]:prices[i][0];
+  });
+}
+
+/* ----- FORM SUBMIT ----- */
+function submitForm(){
+  const n=document.getElementById('nombre').value.trim();
+  const b=document.getElementById('negocio').value.trim();
+  if(!n||!b){
+    /* shake animation */
+    const f=document.getElementById('formFields');
+    f.style.animation='shake .4s var(--ease)';
+    setTimeout(()=>f.style.animation='',400);
+    alert('Por favor completa tu nombre y el nombre de tu negocio 😊');
+    return;
+  }
+  document.getElementById('formFields').style.display='none';
+  document.getElementById('formOk').style.display='block';
+}
+
+/* shake keyframe injection */
+const s=document.createElement('style');
+s.textContent='@keyframes shake{0%,100%{transform:none}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}';
+document.head.appendChild(s);
+
+/* ----- BAR CHART ANIMATION ON LOAD ----- */
+document.querySelectorAll('.bar').forEach((b,i)=>{
+  const h=b.style.height;b.style.height='0';
+  setTimeout(()=>{b.style.transition='height .7s var(--ease-out)';b.style.height=h},300+i*60);
+});
+</script>
+</body>
+</html>
