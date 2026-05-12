@@ -92,16 +92,33 @@
   .burger.open span:nth-child(1){transform:translateY(6.5px) rotate(45deg)}
   .burger.open span:nth-child(2){opacity:0;transform:scaleX(0)}
   .burger.open span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg)}
-  .mobile-menu{position:fixed;inset:0;background:rgba(4,7,15,.97);backdrop-filter:blur(30px);padding:5.5rem 1.75rem 2.5rem;display:flex;flex-direction:column;gap:.4rem;transform:translateY(-110%);opacity:0;pointer-events:none;z-index:899;transition:transform .38s var(--ease),opacity .3s}
+  /* MOBILE MENU — z-index above nav (900), scrollable on small screens */
+  .mobile-menu{
+    position:fixed;inset:0;
+    background:rgba(4,7,15,.98);
+    backdrop-filter:blur(30px) saturate(1.5);
+    padding:5rem 1.75rem 3rem;
+    display:flex;flex-direction:column;gap:.4rem;
+    transform:translateY(-110%);opacity:0;pointer-events:none;
+    z-index:950;
+    overflow-y:auto;-webkit-overflow-scrolling:touch;
+    transition:transform .38s var(--ease),opacity .28s;
+  }
   .mobile-menu.open{transform:translateY(0);opacity:1;pointer-events:auto}
-  .mobile-menu a{font-size:1.1rem;font-weight:600;color:rgba(255,255,255,.8);padding:.85rem 1.2rem;border-radius:12px;border:1px solid transparent;transition:.2s}
+  .mobile-menu a{font-size:1.05rem;font-weight:600;color:rgba(255,255,255,.8);padding:.8rem 1.1rem;border-radius:12px;border:1px solid transparent;transition:.2s;display:block}
   .mobile-menu a:hover{color:#fff;background:rgba(26,107,255,.1);border-color:rgba(26,107,255,.2)}
-  .mobile-menu .btn{margin-top:.85rem;justify-content:center;border-radius:12px;padding:1.05rem}
-  .mob-divider{height:1px;background:var(--border);margin:.5rem 0}
-  .mob-socials{display:flex;gap:.7rem;padding:.85rem 1.2rem}
-  .mob-soc{display:flex;align-items:center;gap:.5rem;font-size:.85rem;font-weight:600;color:var(--text-muted);padding:.55rem 1rem;border-radius:10px;border:1px solid var(--border);background:rgba(255,255,255,.03);transition:.2s}
+  .mobile-menu .btn{margin-top:.85rem;justify-content:center;border-radius:12px;padding:1.05rem;width:100%;display:flex}
+  .mob-divider{height:1px;background:var(--border);margin:.5rem 0;flex-shrink:0}
+  .mob-socials{display:flex;flex-wrap:wrap;gap:.6rem;padding:.75rem 1.1rem}
+  .mob-soc{display:flex;align-items:center;gap:.5rem;font-size:.82rem;font-weight:600;color:var(--text-muted);padding:.5rem .9rem;border-radius:10px;border:1px solid var(--border);background:rgba(255,255,255,.03);transition:.2s}
   .mob-soc:hover{color:#fff;background:rgba(255,255,255,.07)}
   @media(max-width:900px){.nav-links,.nav-socials,.nav-right .btn:not(.burger){display:none}.burger{display:flex}}
+
+  /* SERVICE CARDS — full card clickeable */
+  .svc{cursor:pointer}
+  .svc-click-area{position:absolute;inset:0;z-index:0}
+  .svc .svc-num,.svc .svc-glow,.svc .svc-emoji,.svc h3,.svc>p{position:relative;z-index:1;pointer-events:none}
+  .svc .svc-cta{position:relative;z-index:2}
 
   /* ═══ HERO ═══ */
   #hero{min-height:100vh;display:grid;place-items:center;padding:8rem 0 5rem;position:relative;overflow:hidden}
@@ -572,40 +589,29 @@
         <p class="lead">Desde tu primera página web hasta sistemas completos de gestión, lo construimos todo.</p>
       </div>
       <div class="services-grid">
-        <div class="svc" data-anim="fade-up">
+        <div class="svc" data-anim="fade-up" role="button" tabindex="0" aria-label="Páginas Web — ir al formulario" onclick="cardClick(event,'Página web')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();cardClick(event,'Página web')}">
           <div class="svc-glow"></div><div class="svc-num">01</div><div class="svc-emoji">🌐</div>
           <h3>Páginas Web para Negocios</h3>
           <p>Sitios modernos, rápidos y atractivos con botón de WhatsApp integrado, dominio propio y diseño que convierte cada visita en una oportunidad de venta.</p>
-          <a class="svc-cta" href="javascript:void(0)" onclick="scrollToForm()"> 
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-          </a>
+          <a class="svc-cta" href="#contacto" onclick="event.stopPropagation();selectService('Página web')">Quiero mi web <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
         </div>
-
-        <div class="svc" data-anim="fade-up" style="transition-delay:.05s">
+        <div class="svc" data-anim="fade-up" style="transition-delay:.05s" role="button" tabindex="0" aria-label="Sistemas de Facturación — ir al formulario" onclick="cardClick(event,'Sistema de facturación')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();cardClick(event,'Sistema de facturación')}">
           <div class="svc-glow"></div><div class="svc-num">02</div><div class="svc-emoji">🧾</div>
           <h3>Sistemas de Facturación</h3>
           <p>Genera facturas profesionales en segundos, listas para imprimir o enviar. Organiza ventas, controla cobros pendientes y mantén todo en perfecto orden.</p>
-          <a class="svc-cta" href="javascript:void(0)" onclick="scrollToForm()"> 
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-          </a>
+          <a class="svc-cta" href="#contacto" onclick="event.stopPropagation();selectService('Sistema de facturación')">Ver demo <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
         </div>
-
-        <div class="svc" data-anim="fade-up" style="transition-delay:.1s">
+        <div class="svc" data-anim="fade-up" style="transition-delay:.1s" role="button" tabindex="0" aria-label="Catálogos y Tiendas Online — ir al formulario" onclick="cardClick(event,'Catálogo / Tienda online')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();cardClick(event,'Catálogo / Tienda online')}">
           <div class="svc-glow"></div><div class="svc-num">03</div><div class="svc-emoji">🛒</div>
           <h3>Catálogos y Tiendas Online</h3>
           <p>Muestra tus productos con fotos, precios y descripciones. Recibe pedidos por WhatsApp o con carrito de compras completo, disponible 24/7 para tus clientes.</p>
-          <a class="svc-cta" href="javascript:void(0)" onclick="scrollToForm()"> 
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-          </a>
+          <a class="svc-cta" href="#contacto" onclick="event.stopPropagation();selectService('Catálogo / Tienda online')">Crear catálogo <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
         </div>
-
-        <div class="svc" data-anim="fade-up" style="transition-delay:.15s">
+        <div class="svc" data-anim="fade-up" style="transition-delay:.15s" role="button" tabindex="0" aria-label="Automatización de Negocios — ir al formulario" onclick="cardClick(event,'Automatización')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();cardClick(event,'Automatización')}">
           <div class="svc-glow"></div><div class="svc-num">04</div><div class="svc-emoji">⚙️</div>
           <h3>Automatización de Negocios</h3>
           <p>Herramientas digitales a la medida de tu negocio: inventarios, reservas online, reportes automáticos y más. Vende más sin trabajar el doble.</p>
-          <a class="svc-cta" href="javascript:void(0)" onclick="scrollToForm()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-          </a>
+          <a class="svc-cta" href="#contacto" onclick="event.stopPropagation();selectService('Automatización')">Automatizar ahora <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
         </div>
       </div>
     </div>
@@ -790,7 +796,7 @@
             <!-- NEGOCIO -->
             <div class="fg" id="fg-negocio">
               <label>Nombre de tu negocio <span class="req">*</span></label>
-              <input type="text" id="f-negocio" placeholder="Ej: Tu negocio o marca" oninput="clearErr('fg-negocio')"/>
+              <input type="text" id="f-negocio" placeholder="Ej: Ferretería Don Carlos" oninput="clearErr('fg-negocio')"/>
               <div class="ferr" id="err-negocio">Ingresa el nombre de tu negocio</div>
             </div>
 
@@ -821,16 +827,16 @@
             <div class="fg" id="fg-msg">
               <label>¿Qué necesitas? <span class="req">*</span></label>
               <textarea id="f-msg" placeholder="Ej: Quiero una página web con catálogo de productos, pedidos por WhatsApp y sistema de reservas..." rows="4" oninput="updateCharCount()"></textarea>
-              <div class="char-cnt" id="charCnt">mínimo 10 caracteres </div>
+              <div class="char-cnt" id="charCnt">0 / 10 caracteres mínimo</div>
               <div class="ferr" id="err-msg">Por favor describe qué necesitas (mínimo 10 caracteres)</div>
             </div>
 
             <!-- ANTI-SPAM CHECKBOX -->
             <div class="fg" id="fg-bot">
-              <label>Verificación <span class="req">*(toque la manita)</span></label>
+              <label>Verificación <span class="req">*</span></label>
               <div class="cb-row" id="cbRow" onclick="toggleCheck()">
                 <input type="checkbox" id="f-nobot" readonly/>
-                <label for="f-nobot"> Confirmo que no soy un bot y ✋quiero recibir información de WebBoost</label>
+                <label for="f-nobot">✋ Confirmo que no soy un bot y quiero recibir información de WebBoost</label>
               </div>
               <div class="ferr" id="err-bot">Por favor confirma que no eres un bot</div>
             </div>
@@ -929,18 +935,63 @@
 
   /* ══════════════════════════════════
      MOBILE MENU
+     — z-index 950 (above nav 900)
+     — body overflow released on close
+     — ESC key closes menu
   ══════════════════════════════════ */
   const burgerBtn = document.getElementById('burger');
   const mMenuEl   = document.getElementById('mobileMenu');
   let mmOpen = false;
-  burgerBtn.addEventListener('click',()=>{
-    mmOpen=!mmOpen;
-    burgerBtn.classList.toggle('open',mmOpen);
-    mMenuEl.classList.toggle('open',mmOpen);
-    document.body.style.overflow=mmOpen?'hidden':'';
+
+  function openMM(){
+    mmOpen = true;
+    burgerBtn.classList.add('open');
+    mMenuEl.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    document.body.style.position = 'fixed';
+    document.body.style.width = '100%';
+  }
+  function closeMM(){
+    mmOpen = false;
+    burgerBtn.classList.remove('open');
+    mMenuEl.classList.remove('open');
+    document.body.style.overflow = '';
+    document.body.style.position = '';
+    document.body.style.width = '';
+  }
+
+  burgerBtn.addEventListener('click', e => {
+    e.stopPropagation();
+    mmOpen ? closeMM() : openMM();
   });
-  function closeMM(){mmOpen=false;burgerBtn.classList.remove('open');mMenuEl.classList.remove('open');document.body.style.overflow='';}
-  document.addEventListener('click',e=>{if(mmOpen&&!mMenuEl.contains(e.target)&&!burgerBtn.contains(e.target))closeMM();});
+
+  /* Close on outside click */
+  document.addEventListener('click', e => {
+    if(mmOpen && !mMenuEl.contains(e.target) && !burgerBtn.contains(e.target)) closeMM();
+  });
+
+  /* Close on ESC */
+  document.addEventListener('keydown', e => {
+    if(e.key === 'Escape' && mmOpen) closeMM();
+  });
+
+  /* ══════════════════════════════════
+     SERVICE CARD — full card click
+     Calls selectService() + smooth-scrolls
+     to #contacto. If the .svc-cta button
+     is the target, let the anchor handle it
+     naturally (stopPropagation set there).
+  ══════════════════════════════════ */
+  function cardClick(e, tipo){
+    /* Already handled by .svc-cta anchor — do nothing extra */
+    if(e.target.closest('.svc-cta')) return;
+    selectService(tipo);
+    const contacto = document.getElementById('contacto');
+    if(contacto){
+      const top = contacto.getBoundingClientRect().top + window.scrollY - 76;
+      window.scrollTo({top, behavior:'smooth'});
+    }
+  }
 
   /* ══════════════════════════════════
      SCROLL REVEAL
