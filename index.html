@@ -1156,40 +1156,70 @@
   }
 
   /* ══════════════════════════════════
-     TELEGRAM SEND
-  ══════════════════════════════════ */
-  async function enviarTelegram(data){
-    const tipo = data.tipo === 'Otro' && data.tipoOtro ? data.tipoOtro : (data.tipo || '—');
-    const texto =
-  `🚀 *Nueva solicitud WebBoost*
+       TELEGRAM SEND — BULLETPROOF
+       1) HTML mode (escapa chars especiales)
+       2) Fallback plain text sin parse_mode
+       3) Timeout 15 s por intento
+    ══════════════════════════════════ */
+    async function enviarTelegram(data){
+      /* Escapa caracteres especiales HTML para parse_mode:'HTML' */
+      function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
-  👤 *Nombre:* ${data.nombre}
-  📧 *Email:* ${data.email}
-  📱 *Teléfono:* ${data.telefono || 'No proporcionado'}
-  🏢 *Negocio:* ${data.negocio}
-  📊 *Tipo:* ${tipo}
-  📝 *Necesita:* ${data.mensaje}`;
+      const tipo = data.tipo === 'Otro' && data.tipoOtro ? data.tipoOtro : (data.tipo || '—');
 
-    const response = await fetch(
-      `https://api.telegram.org/bot${TG_TOKEN}/sendMessage`,
-      {
-        method: 'POST',
-        headers: {'Content-Type':'application/json'},
-        body: JSON.stringify({
-          chat_id: TG_CHAT_ID,
-          text: texto,
-          parse_mode: 'Markdown'
-        })
+      const htmlText =
+  '🚀 <b>Nueva solicitud WebBoost</b>\n\n' +
+  '👤 <b>Nombre:</b> ' + esc(data.nombre) + '\n' +
+  '📧 <b>Email:</b> ' + esc(data.email) + '\n' +
+  '📱 <b>Teléfono:</b> ' + esc(data.telefono || 'No proporcionado') + '\n' +
+  '🏢 <b>Negocio:</b> ' + esc(data.negocio) + '\n' +
+  '📊 <b>Tipo:</b> ' + esc(tipo) + '\n' +
+  '📝 <b>Necesita:</b> ' + esc(data.mensaje);
+
+      const plainText =
+  '🚀 Nueva solicitud WebBoost\n\n' +
+  '👤 Nombre: ' + (data.nombre||'') + '\n' +
+  '📧 Email: ' + (data.email||'') + '\n' +
+  '📱 Teléfono: ' + (data.telefono || 'No proporcionado') + '\n' +
+  '🏢 Negocio: ' + (data.negocio||'') + '\n' +
+  '📊 Tipo: ' + tipo + '\n' +
+  '📝 Necesita: ' + (data.mensaje||'');
+
+      const API = 'https://api.telegram.org/bot'+TG_TOKEN+'/sendMessage';
+
+      /* fetch con timeout usando AbortController */
+      async function fetchTimeout(url, opts, ms){
+        ms = ms || 15000;
+        const ctrl = new AbortController();
+        const timer = setTimeout(function(){ctrl.abort();}, ms);
+        try { return await fetch(url, Object.assign({}, opts, {signal: ctrl.signal})); }
+        finally { clearTimeout(timer); }
       }
-    );
-    const json = await response.json();
-    if(!response.ok || !json.ok){
-      throw new Error(json.description || 'Error al enviar a Telegram');
-    }
-    return true;
-  }
 
-  /* ══════════════════════════════════
+      /* Intento 1: HTML mode */
+      try {
+        const r = await fetchTimeout(API, {
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({chat_id: TG_CHAT_ID, text: htmlText, parse_mode:'HTML'})
+        });
+        const j = await r.json();
+        if(j.ok) return true;
+        /* Si Telegram rechazó HTML mode, caemos al intento 2 */
+      } catch(e1){ /* timeout o error de red → intento 2 */ }
+
+      /* Intento 2: Plain text sin parse_mode */
+      const r2 = await fetchTimeout(API, {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({chat_id: TG_CHAT_ID, text: plainText})
+      });
+      const j2 = await r2.json();
+      if(j2.ok) return true;
+      throw new Error(j2.description || 'Error Telegram');
+    }
+
+    /* ══════════════════════════════════
      TOAST
   ══════════════════════════════════ */
   let toastTimer;
